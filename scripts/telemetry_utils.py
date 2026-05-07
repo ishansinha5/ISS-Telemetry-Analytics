@@ -1,28 +1,76 @@
 import pandas as pd
 
-# I need to define the approximate latitude and longitude boundaries for Michigan.
-# East Lansing is around 42.73 N, -84.48 W, so I'll create a box around that general area.
-MICHIGAN_MIN_LAT = 41.5
-MICHIGAN_MAX_LAT = 47.5
-MICHIGAN_MIN_LON = -90.5
-MICHIGAN_MAX_LON = -82.0
+# I need to define the approximate latitude and longitude boundaries for the regions I want to track.
+# Finding exact, perfect squares for states is a bit rough, but these coordinates create a solid net.
+# I'm tracking my school's area (MSU/East Lansing) and checking in on Chicago/Illinois as well.
 
-def count_michigan_flyovers(csv_filepath):
-    # Load the dataset into a pandas dataframe
+# East Lansing bounds
+EL_MIN_LAT = 42.70
+EL_MAX_LAT = 42.76
+EL_MIN_LON = -84.52
+EL_MAX_LON = -84.42
+
+# Michigan bounds
+MI_MIN_LAT = 41.69
+MI_MAX_LAT = 48.32
+MI_MIN_LON = -90.41
+MI_MAX_LON = -82.41
+
+# Chicago bounds
+CHI_MIN_LAT = 41.64
+CHI_MAX_LAT = 42.02
+CHI_MIN_LON = -87.94
+CHI_MAX_LON = -87.52
+
+# Illinois bounds
+IL_MIN_LAT = 36.97
+IL_MAX_LAT = 42.50
+IL_MIN_LON = -91.51
+IL_MAX_LON = -87.49
+
+def count_regional_flyovers(csv_filepath):
+    # Load the dataset into a pandas dataframe. 
+    # Pandas makes it pretty straightforward to read the CSV and iterate through.
     df = pd.read_csv(csv_filepath)
     
-    # Counter to keep track of how many data points fall inside our box
-    michigan_points = 0
+    # Setting up basic counters to keep track of how many data points fall inside our boxes
+    east_lansing_count = 0
+    michigan_count = 0
+    chicago_count = 0
+    illinois_count = 0
     
-    # I want to iterate through every single row to check the coordinates.
-    # Expanding this out so the logic is easy to read and debug.
+    # I want to explicitly go through every single row to check the coordinates.
+    # Expanding this out makes the logic atomic and much easier for me to debug.
     for index, row in df.iterrows():
         lat = row['latitude']
         lon = row['longitude']
         
-        # Check if the current coordinate is within the Michigan bounding box
-        if (lat >= MICHIGAN_MIN_LAT and lat <= MICHIGAN_MAX_LAT):
-            if (lon >= MICHIGAN_MIN_LON and lon <= MICHIGAN_MAX_LON):
-                michigan_points = michigan_points + 1
+        # Check East Lansing
+        if (lat >= EL_MIN_LAT and lat <= EL_MAX_LAT):
+            if (lon >= EL_MIN_LON and lon <= EL_MAX_LON):
+                east_lansing_count = east_lansing_count + 1
                 
-    return michigan_points
+        # Check Michigan
+        if (lat >= MI_MIN_LAT and lat <= MI_MAX_LAT):
+            if (lon >= MI_MIN_LON and lon <= MI_MAX_LON):
+                michigan_count = michigan_count + 1
+                
+        # Check Chicago
+        if (lat >= CHI_MIN_LAT and lat <= CHI_MAX_LAT):
+            if (lon >= CHI_MIN_LON and lon <= CHI_MAX_LON):
+                chicago_count = chicago_count + 1
+                
+        # Check Illinois
+        if (lat >= IL_MIN_LAT and lat <= IL_MAX_LAT):
+            if (lon >= IL_MIN_LON and lon <= IL_MAX_LON):
+                illinois_count = illinois_count + 1
+                
+    # Pack the final counts into a dictionary so it's easy to grab in the Jupyter notebook
+    results = {
+        'East Lansing': east_lansing_count,
+        'Michigan': michigan_count,
+        'Chicago': chicago_count,
+        'Illinois': illinois_count
+    }
+    
+    return results
