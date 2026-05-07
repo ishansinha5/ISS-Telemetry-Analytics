@@ -2,6 +2,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 def calculate_terminator_cycle(csv_filepath, save_visuals=True):
+    # Approximating local time using longitude offsets to map daylight vs eclipse.
     df = pd.read_csv(csv_filepath)
     df['timestamp'] = pd.to_datetime(df['timestamp'])
     
@@ -23,7 +24,6 @@ def calculate_terminator_cycle(csv_filepath, save_visuals=True):
             night_count = night_count + 1
             
     if (save_visuals == True):
-        # Bar chart to show the exact ping distribution across the terminator line
         labels = ['Daylight (Approx)', 'Eclipse / Night (Approx)']
         counts = [day_count, night_count]
         
@@ -34,8 +34,4 @@ def calculate_terminator_cycle(csv_filepath, save_visuals=True):
         plt.savefig('./assets/astrodynamics_terminator.png')
         plt.close()
             
-    results = {
-        'Day_Pings': day_count,
-        'Night_Pings': night_count
-    }
-    return results
+    return {'Day_Pings': day_count, 'Night_Pings': night_count}
